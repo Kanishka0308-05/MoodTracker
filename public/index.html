@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mood Tracker 😊</title>
+    <style>
+        /* General body styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        /* Container for all elements */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            padding: 2rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Styling for input and button */
+        .mood-input input {
+            width: 70%;
+            padding: 10px;
+            font-size: 16px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .mood-input button {
+            padding: 10px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        /* Mood log section */
+        .mood-log {
+            background-color: #f1f1f1;
+            padding: 1rem;
+            margin-top: 20px;
+            max-height: 300px;
+            overflow-y: scroll;
+            text-align: left;
+            border-radius: 5px;
+        }
+
+        /* Heading styles */
+        h1 {
+            font-size: 2.5rem;
+            color: #4CAF50;
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 20px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Mood Tracker 😊</h1>
+<div class="container">
+    <!-- Mood Input Section -->
+    <div class="mood-input">
+        <input type="text" id="moodInput" placeholder="How are you feeling today?" />
+        <button onclick="submitMood()">Save Mood</button>
+    </div>
+
+    <!-- Mood History Section -->
+    <h2>Your Mood History</h2>
+    <div id="moodLog" class="mood-log">Loading...</div>
+</div>
+
+<script>
+    // Function to submit a new mood to the backend
+    function submitMood() {
+        const mood = document.getElementById("moodInput").value;
+        if (!mood) return alert("Please enter a mood!");
+
+        // Sending the mood data to the backend via a POST request
+        fetch("/api/save-mood", {
+            method: "POST",
+            body: mood
+        }).then(() => {
+            document.getElementById("moodInput").value = ""; // Clear the input field
+            loadMoods(); // Reload the mood history
+        });
+    }
+
+    // Function to load mood history from the backend
+    function loadMoods() {
+        fetch("/api/get-moods")
+            .then(response => response.text())
+            .then(data => {
+                document.getElementById("moodLog").innerText = data || "No moods logged yet."; // Display history or default message
+            });
+    }
+
+    // Load mood history when the page loads
+    window.onload = loadMoods;
+</script>
+
+</body>
+</html>
